@@ -75,7 +75,8 @@ class _CategoryNavState extends State<CategoryNav> {
         var childList = list[index].bxMallSubDto;
         var categoryId = list[index].mallCategoryId;
         print(childList);
-        Provide.value<ChildCategory>(context).getChildCategory(childList);
+        Provide.value<ChildCategory>(context)
+            .getChildCategory(childList, categoryId);
         _getProduct(categoryId: categoryId);
       },
       child: Container(
@@ -100,7 +101,7 @@ class _CategoryNavState extends State<CategoryNav> {
         list = obj.data;
       });
       Provide.value<ChildCategory>(context)
-          .getChildCategory(list[0].bxMallSubDto);
+          .getChildCategory(list[0].bxMallSubDto, list[0].mallCategoryId);
     });
   }
 
@@ -153,7 +154,10 @@ class _RightNavState extends State<RightNav> {
         ? true
         : false;
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        Provide.value<ChildCategory>(context).changeChildIndex(index,item.mallSubId);
+        _getProduct(item.mallSubId);
+      },
       child: Container(
         padding: EdgeInsets.fromLTRB(5.0, 10.0, 5.0, 10.0),
         child: Text(item.mallSubName,
@@ -162,6 +166,17 @@ class _RightNavState extends State<RightNav> {
                 color: isClick ? Colors.pink : Colors.black)),
       ),
     );
+  }
+
+  void _getProduct(String categorySubId) {
+    var data = {
+      'categoryId': Provide.value<ChildCategory>(context).categoryId,
+      'categorySubId': categorySubId
+    };
+    getProduct(data).then((res) {
+      CategoryGoodsList obj = CategoryGoodsList.fromJson(res);
+      Provide.value<CategoryGoodsListProvide>(context).getGoodsList(obj.data);
+    });
   }
 }
 
@@ -181,15 +196,22 @@ class _ProductState extends State<Product> {
   @override
   Widget build(BuildContext context) {
     return Provide<CategoryGoodsListProvide>(builder: (context, child, data) {
-      return Container(
-          width: ScreenUtil().setWidth(570),
-          height: ScreenUtil().setHeight(1000),
-          child: ListView.builder(
-            itemCount: data.goodsList.length,
-            itemBuilder: (context, index) {
-              return _listItem(data.goodsList, index);
-            },
-          ));
+      if (data.goodsList.length > 0) {
+        return Container(
+            width: ScreenUtil().setWidth(570),
+            height: ScreenUtil().setHeight(1000),
+            child: ListView.builder(
+              itemCount: data.goodsList.length,
+              itemBuilder: (context, index) {
+                return _listItem(data.goodsList, index);
+              },
+            ));
+      } else {
+        return Container(
+          padding: EdgeInsets.only(top:30),
+          child: Text('暂无该类商品'),
+        );
+      }
     });
   }
 
