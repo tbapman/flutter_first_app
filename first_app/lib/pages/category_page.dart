@@ -7,6 +7,8 @@ import 'dart:convert';
 import 'package:provide/provide.dart';
 import '../provide/child_category.dart';
 import '../provide/category_goods_list.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class CategoryPage extends StatefulWidget {
   @override
@@ -106,9 +108,7 @@ class _CategoryNavState extends State<CategoryNav> {
   }
 
   void _getProduct({String categoryId}) async {
-    var data = {
-      'categoryId': categoryId ?? '4',
-    };
+    var data = {'categoryId': categoryId ?? '4', 'page': 1};
     await getProduct(data).then((res) {
       CategoryGoodsList obj = CategoryGoodsList.fromJson(res);
       Provide.value<CategoryGoodsListProvide>(context).getGoodsList(obj.data);
@@ -155,7 +155,8 @@ class _RightNavState extends State<RightNav> {
         : false;
     return InkWell(
       onTap: () {
-        Provide.value<ChildCategory>(context).changeChildIndex(index,item.mallSubId);
+        Provide.value<ChildCategory>(context)
+            .changeChildIndex(index, item.mallSubId);
         _getProduct(item.mallSubId);
       },
       child: Container(
@@ -188,6 +189,7 @@ class Product extends StatefulWidget {
 }
 
 class _ProductState extends State<Product> {
+  var scrollController = new ScrollController();
   @override
   void initState() {
     super.initState();
@@ -196,22 +198,63 @@ class _ProductState extends State<Product> {
   @override
   Widget build(BuildContext context) {
     return Provide<CategoryGoodsListProvide>(builder: (context, child, data) {
+      try {
+        if (Provide.value<ChildCategory>(context).page == 1) {
+          scrollController.jumpTo(0.0);
+        }
+      } catch (e) {
+        print('第一次进入页面$e');
+      }
+
       if (data.goodsList.length > 0) {
         return Container(
             width: ScreenUtil().setWidth(570),
             height: ScreenUtil().setHeight(1000),
-            child: ListView.builder(
-              itemCount: data.goodsList.length,
-              itemBuilder: (context, index) {
-                return _listItem(data.goodsList, index);
-              },
-            ));
+            child: EasyRefresh(
+                footer: ClassicalFooter(
+                    loadText: '下拉加载更多',
+                    loadingText: '正在加载中...',
+                    bgColor: Colors.white,
+                    textColor: Colors.pink,
+                    loadedText: '没有更多了'),
+                child: ListView.builder(
+                  controller: scrollController,
+                  itemCount: data.goodsList.length,
+                  itemBuilder: (context, index) {
+                    return _listItem(data.goodsList, index);
+                  },
+                ),
+                onLoad: () async {
+                  _loadMore();
+                }));
       } else {
         return Container(
-          padding: EdgeInsets.only(top:30),
+          padding: EdgeInsets.only(top: 30),
           child: Text('暂无该类商品'),
         );
       }
+    });
+  }
+
+  void _loadMore() {
+    Provide.value<ChildCategory>(context).addPage();
+    var data = {
+      'categoryId': Provide.value<ChildCategory>(context).categoryId,
+      'categorySubId': Provide.value<ChildCategory>(context).subId,
+      'page': Provide.value<ChildCategory>(context).page,
+    };
+    getProduct(data).then((res) {
+      CategoryGoodsList obj = CategoryGoodsList.fromJson(res);
+      if (obj.data.length == 0) {
+        Fluttertoast.showToast(
+            msg: '已经到底了',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            backgroundColor: Colors.pink,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+      Provide.value<CategoryGoodsListProvide>(context).getMoreList(obj.data);
     });
   }
 

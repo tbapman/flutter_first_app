@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 // import 'dart:convert';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import '../routers/application.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -52,13 +53,12 @@ class _HomePageState extends State<HomePage>
               List<dynamic> floorData =
                   (snapshot.data['data'] as List)[0]['floorData'];
               return EasyRefresh(
-                footer: ClassicalFooter(
-                  loadText: '下拉加载更多',
-                  loadingText: '正在加载中...',
-                  bgColor: Colors.white,
-                  textColor: Colors.pink,
-                  loadedText:'没有更多了'
-                ),
+                  footer: ClassicalFooter(
+                      loadText: '下拉加载更多',
+                      loadingText: '正在加载中...',
+                      bgColor: Colors.white,
+                      textColor: Colors.pink,
+                      loadedText: '没有更多了'),
                   child: ListView(
                     children: <Widget>[
                       SwiperDiy(
@@ -126,7 +126,10 @@ class _HomePageState extends State<HomePage>
     if (hotGoodsList.length != 0) {
       List<Widget> listWidget = hotGoodsList.map((item) {
         return InkWell(
-          onTap: () {},
+          onTap: () {
+            Application.router
+                .navigateTo(context, '/detail?id=${item['goodsId']}');
+          },
           child: Container(
             width: ScreenUtil().setWidth(372),
             color: Colors.white,
