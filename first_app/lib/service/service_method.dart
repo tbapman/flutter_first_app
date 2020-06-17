@@ -22,7 +22,7 @@ Future getHomeHotProduct(data) async {
   try {
     Dio dio = new Dio();
     dio.options.contentType = Headers.formUrlEncodedContentType;
-    res = await dio.get(servicePath['hotProduct'],queryParameters:data );
+    res = await dio.get(servicePath['hotProduct'], queryParameters: data);
     print(res);
     return res.data;
   } catch (e) {
@@ -49,7 +49,20 @@ Future getProduct(data) async {
   try {
     Dio dio = new Dio();
     dio.options.contentType = Headers.formUrlEncodedContentType;
-    res = await dio.get(servicePath['getProduct'],queryParameters: data);
+    res = await dio.get(servicePath['getProduct'], queryParameters: data);
+    return res.data;
+  } catch (e) {
+    print(e);
+  }
+}
+
+//获取详情
+Future getDetail(data) async {
+  Response res;
+  try {
+    Dio dio = new Dio();
+    dio.options.contentType = Headers.formUrlEncodedContentType;
+    res = await dio.get(servicePath['getDetail'], queryParameters: data);
     return res.data;
   } catch (e) {
     print(e);

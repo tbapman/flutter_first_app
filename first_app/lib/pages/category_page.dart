@@ -3,7 +3,6 @@ import '../service/service_method.dart';
 import '../model/category.dart';
 import '../model/categoryGoodList.dart';
 import 'package:flutter_screenutil/screenutil.dart';
-import 'dart:convert';
 import 'package:provide/provide.dart';
 import '../provide/child_category.dart';
 import '../provide/category_goods_list.dart';
