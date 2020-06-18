@@ -21,8 +21,7 @@ class DetailsWeb extends StatelessWidget {
         if (isLeft) {
           return Container(
             child: Html(
-              data:
-                  '''<div class="content ke-post" style="height: auto;"><p style="text-align: center;"><img src="https://img.alicdn.com/imgextra/i3/2206507193056/O1CN01rbDE0O1YRgw6QW9fr_!!2206507193056.jpg" align="absmiddle" class="img-ks-lazyload" data-spm-anchor-id="a220o.1000855.0.i0.4d1a60e6Sr8JCJ"><img src="https://img.alicdn.com/imgextra/i3/2206507193056/O1CN01iOOOgO1YRgw8bp9Ya_!!2206507193056.jpg" align="absmiddle" class="img-ks-lazyload"><img src="https://img.alicdn.com/imgextra/i2/2206507193056/O1CN01SbS6iA1YRgw7erkLM_!!2206507193056.jpg" align="absmiddle" class="img-ks-lazyload"><img src="https://img.alicdn.com/imgextra/i1/2206507193056/O1CN01ZeGkyD1YRgw7esU5L_!!2206507193056.jpg" align="absmiddle" class="img-ks-lazyload"><img src="https://img.alicdn.com/imgextra/i1/2206507193056/O1CN01T46XcL1YRgw7esxBJ_!!2206507193056.jpg" align="absmiddle" class="img-ks-lazyload"> </p></div>''',
+              data:Provide.value<DetailsInfoProvide>(context).goodsInfo.data.goodsInfo.goodsDetail,
             ),
           );
         } else {

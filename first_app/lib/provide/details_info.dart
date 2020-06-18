@@ -24,8 +24,6 @@ class DetailsInfoProvide with ChangeNotifier {
     var obj = {"id": id};
     await getDetail(obj).then((res) {
       goodsInfo = DetailsModel.fromJson(res);
-      print('----------');
-      print(res);
       notifyListeners();
     });
   }

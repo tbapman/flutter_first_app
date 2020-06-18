@@ -31,6 +31,8 @@ class CartProvide with ChangeNotifier {
       notifyListeners();
     }
     cartString = json.encode(tempList).toString();
+    print('--------');
+    print(goodsId);
     print(cartString);
     prefs.setString('cartInfo', cartString);
   }
